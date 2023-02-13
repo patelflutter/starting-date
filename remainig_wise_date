@@ -1,0 +1,54 @@
+class TimerPage extends StatefulWidget {
+  @override
+  _TimerPageState createState() => _TimerPageState();
+}
+
+class _TimerPageState extends State<TimerPage> {
+  DateTime _endDate = DateTime(2023, 5, 8, 0);
+
+  late Timer _timer;
+
+  void startTimer() {
+    setState(() {
+      _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+        setState(() {
+          Duration remaining = _endDate.difference(DateTime.now());
+          if (remaining.inSeconds > 0) {
+            _endDate = _endDate;
+          } else {
+            _timer.cancel();
+          }
+        });
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: _endDate.difference(DateTime.now()).inSeconds > 0
+            ? Text(
+                "${_endDate.difference(DateTime.now()).inDays} days, ${_endDate.difference(DateTime.now()).inHours % 24} hours, ${_endDate.difference(DateTime.now()).inMinutes % 60} minutes, and ${_endDate.difference(DateTime.now()).inSeconds % 60} seconds left")
+            : Container(
+                height: 200,
+                width: 200,
+                color: Colors.red,
+                child: Center(
+                  child: Text("Countdown ended"),
+                ),
+              ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: startTimer,
+        child: Icon(Icons.timer),
+      ),
+    );
+  }
+}
